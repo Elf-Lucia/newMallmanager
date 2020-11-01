@@ -41,8 +41,6 @@ export default {
           meta: { msg, status },
         } = res;
         if (status === 200) {
-          const token = data.token;
-          sessionStorage.setItem("token", token);
           this.$router.push({name:'home'})
           this.$message.success(msg);
         } else {
