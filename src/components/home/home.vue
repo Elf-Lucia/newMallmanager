@@ -4,13 +4,15 @@
       <el-row>
         <el-col :span="4"><img src="../../assets/logo.png" alt="" /> </el-col>
         <el-col :span="16"><h2>电商管理平台</h2></el-col>
-        <el-col :span="4" class="exit"><a href="javascript:;">退出</a> </el-col>
+        <el-col :span="4" class="exit"
+          ><a href="javascript:;" @click.prevent="handleExit()">退出</a>
+        </el-col>
       </el-row>
     </el-header>
     <el-container>
       <el-aside class="aside">
         <!-- 侧边栏导航el-menu -->
-        <el-menu :unique-opened="false" @open="handleOpen" @close="handleClose">
+        <el-menu :unique-opened="false">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -88,17 +90,19 @@ export default {
   beforeCreate() {
     //在组件出现之前获取token，有就渲染组件
     let token = localStorage.getItem("token");
-    if(!token){
-      this.$router.push({name:'login'})
+    if (!token) {
+      this.$router.push({ name: "login" });
     }
   },
   mounted() {},
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    // 退出
+    handleExit() {
+      if (confirm("您确认退出吗")) {
+        localStorage.clear("token");
+        this.$message("退出成功")
+        this.$router.push({ name: "login" });
+      }
     },
   },
 };
