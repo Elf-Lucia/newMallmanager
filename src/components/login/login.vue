@@ -33,20 +33,18 @@ export default {
   methods: {
     //登录请求
 
-    handleLogin() {
-      this.$http.post("login", this.formData).then((res) => {
-        // console.log(res, '')
-        const {
-          data,
-          meta: { msg, status },
-        } = res;
-        if (status === 200) {
-          this.$router.push({name:'home'})
-          this.$message.success(msg);
-        } else {
-          this.$message.error(msg);
-        }
-      });
+    async handleLogin() {
+      let result = await this.$http.post("login", this.formData);
+      const {
+        data,
+        meta: { msg, status },
+      } = result;
+      if (status === 200) {
+        this.$router.push({ name: "home" });
+        this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+      }
     },
   },
 };
