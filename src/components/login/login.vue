@@ -40,6 +40,8 @@ export default {
         meta: { msg, status },
       } = result;
       if (status === 200) {
+        const token = data.token
+        localStorage.setItem('token',token)
         this.$router.push({ name: "home" });
         this.$message.success(msg);
       } else {
