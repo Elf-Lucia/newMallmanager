@@ -10,11 +10,7 @@
     <el-container>
       <el-aside class="aside">
         <!-- 侧边栏导航el-menu -->
-        <el-menu
-          :unique-opened="false"
-          @open="handleOpen"
-          @close="handleClose"
-        >
+        <el-menu :unique-opened="false" @open="handleOpen" @close="handleClose">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -56,7 +52,7 @@
             </el-menu-item>
           </el-submenu>
           <!-- 订单管理 -->
-           <el-submenu index="4">
+          <el-submenu index="4">
             <template slot="title">
               <i class="el-icon-s-help"></i>
               <span slot="title">订单管理</span>
@@ -67,7 +63,7 @@
             </el-menu-item>
           </el-submenu>
           <!-- 数据统计 -->
-           <el-submenu index="5">
+          <el-submenu index="5">
             <template slot="title">
               <i class="el-icon-s-data"></i>
               <span slot="title">数据统计</span>
@@ -76,7 +72,6 @@
               <i class="el-icon-location"></i>
               <span slot="title">数据报表</span>
             </el-menu-item>
-           
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -87,6 +82,17 @@
 
 <script>
 export default {
+  data() {
+    return {};
+  },
+  beforeCreate() {
+    //在组件出现之前获取token，有就渲染组件
+    let token = localStorage.getItem("token");
+    if(!token){
+      this.$router.push({name:'login'})
+    }
+  },
+  mounted() {},
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
