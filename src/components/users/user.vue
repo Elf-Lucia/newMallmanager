@@ -58,27 +58,30 @@
         </template>
       </el-table-column>
       <el-table-column prop="address" label="操作">
-        <el-button
-          type="primary"
-          icon="el-icon-edit"
-          size="small"
-          plain
-          circle
-        ></el-button>
-        <el-button
-          type="success"
-          icon="el-icon-check"
-          size="small"
-          plain
-          circle
-        ></el-button>
-        <el-button
-          type="danger"
-          icon="el-icon-delete"
-          size="small"
-          plain
-          circle
-        ></el-button>
+        <template slot-scope="userlist">
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            size="small"
+            plain
+            circle
+          ></el-button>
+          <el-button
+            type="success"
+            icon="el-icon-check"
+            size="small"
+            plain
+            circle
+          ></el-button>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="small"
+            plain
+            circle
+            @click="deleteUser(userlist.row.id)"
+          ></el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
@@ -143,12 +146,36 @@ export default {
   },
   computed: {},
   methods: {
+    //删除按钮
+    deleteUser(id) {
+      //---打开一个消息盒子confirm
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          const res = await this.$http.delete(`users/${id}`);
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+          this.pagenum = 1;
+          this.getUserList();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
     //添加用户的弹出框确认
     async addUser() {
       this.dialogFormVisibleAdd = false;
       if (this.form.username.length == 0 || this.form.password.length === 0) {
         // alert("用户名或密码必填");
-         this.dialogFormVisibleAdd = true;
+        this.dialogFormVisibleAdd = true;
       }
       const res = await this.$http.post(`users`, this.form);
       const {
@@ -207,6 +234,7 @@ export default {
       if (status === 200) {
         this.userlist = users;
         this.total = total;
+
         this.$message.success(msg);
       }
     },
