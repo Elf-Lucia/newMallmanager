@@ -11,8 +11,15 @@
       placeholder="请输入内容"
       class="input-with-select input-text"
       v-model="query"
+      @input="searchUser()"
+      clearable
+      @clear="clearInput()"
     >
-      <el-button slot="append" icon="el-icon-search"></el-button>
+      <el-button
+        slot="append"
+        icon="el-icon-search"
+        @click="searchUser()"
+      ></el-button>
     </el-input>
     <!-- 添加 -->
     <el-button type="success" plain class="add">添加用户</el-button>
@@ -98,7 +105,17 @@ export default {
   mounted() {
     this.getUserList();
   },
+  computed: {},
   methods: {
+    //清空搜索框触发
+    clearInput() {
+      this.getUserList();
+    },
+    // 搜索用户
+    searchUser() {
+      //按照query进行搜索
+      this.getUserList();
+    },
     //分页
     handleSizeChange(val) {
       //每页条数改变时会触发
@@ -120,7 +137,7 @@ export default {
       const res = await this.$http.get(
         `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pageSize}`
       );
-      console.log(res);
+      // console.log(res);
       const {
         data: { users, total },
         meta: { status, msg },
