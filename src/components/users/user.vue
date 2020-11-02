@@ -22,7 +22,13 @@
       ></el-button>
     </el-input>
     <!-- 添加 -->
-    <el-button type="success" plain class="add">添加用户</el-button>
+    <el-button
+      type="success"
+      plain
+      class="add"
+      @click="dialogFormVisibleAdd = true"
+      >添加用户</el-button
+    >
     <!-- 表格展示 -->
     <el-table :data="userlist" class="list-table" stripe style="width: 100%">
       <el-table-column prop="id" label="#" width="40" type="index">
@@ -86,6 +92,27 @@
       :total="total"
     >
     </el-pagination>
+    <!-- 添加用户对话框 -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth" required>
+          <el-input v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" :label-width="formLabelWidth" required>
+          <el-input v-model="form.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+        <el-button type="primary" @click="addUser()">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -100,6 +127,15 @@ export default {
       pageSize: 5,
       pagenum: 1,
       total: -1,
+      //添加用户对话框
+      dialogFormVisibleAdd: false,
+      form: {
+        username: "",
+        password: "",
+        email: "",
+        mobile: "",
+      },
+      formLabelWidth: "120px",
     };
   },
   mounted() {
@@ -107,6 +143,32 @@ export default {
   },
   computed: {},
   methods: {
+    //添加用户的弹出框确认
+    async addUser() {
+      this.dialogFormVisibleAdd = false;
+      if (this.form.username.length == 0 || this.form.password.length === 0) {
+        // alert("用户名或密码必填");
+         this.dialogFormVisibleAdd = true;
+      }
+      const res = await this.$http.post(`users`, this.form);
+      const {
+        data,
+        meta: { status, msg },
+      } = res;
+      if (status === 201) {
+        this.$message.success(msg);
+        this.getUserList();
+      } else {
+        this.$message.error(msg);
+      }
+      // 清空文本框
+      // this.form = {};
+      for (const key in this.form) {
+        if (this.form.hasOwnProperty(key)) {
+          this.form[key] = "";
+        }
+      }
+    },
     //清空搜索框触发
     clearInput() {
       this.getUserList();
