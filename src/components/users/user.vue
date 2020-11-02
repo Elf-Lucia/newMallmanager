@@ -17,13 +17,23 @@
     <!-- 添加 -->
     <el-button type="success" plain class="add">添加用户</el-button>
     <!-- 表格展示 -->
-    <el-table :data="tableData" class="list-table" stripe style="width: 100%">
+    <el-table :data="userlist" class="list-table" stripe style="width: 100%">
       <el-table-column prop="id" label="#" width="40" type="index">
       </el-table-column>
-      <el-table-column prop="username" label="姓名" width="100"> </el-table-column>
+      <el-table-column prop="username" label="姓名" width="100">
+      </el-table-column>
       <el-table-column prop="email" label="邮箱"> </el-table-column>
       <el-table-column prop="mobile" label="电话"> </el-table-column>
-      <el-table-column prop="create_time" label="创建日期"> </el-table-column>
+      <el-table-column prop="create_time" label="创建日期">
+        <!-- 如果单元格内显示的内容不是字符串，需要给被显示的内容包裹一层template -->
+        <!-- template和el-table-column是两个标签，要在template标签里面使用外面标签的数据
+        需要加slot-scope属性，该属性的值要使用数据的数据源userlist
+        ->userlist.row指的是数组中的每个对象
+         -->
+        <template slot-scope="userlist">
+          {{ userlist.row.create_time | frmdate }}
+        </template>
+      </el-table-column>
       <el-table-column label="用户状态">
         <el-switch
           v-model="value"
@@ -56,10 +66,10 @@
     <!-- 分页 -->
     <el-pagination
       :current-page="pagenum"
-      :page-sizes="[100, 200, 300, 400]"
+      :page-sizes="[10, 20, 30, 50]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400"
+      :total="total"
     >
     </el-pagination>
   </el-card>
@@ -69,17 +79,14 @@
 export default {
   data() {
     return {
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-      ],
+      userlist: [],
+      //查询的数据
       query: "",
       value: true,
-      pageSize: 1,
+      // 分页相关的数据
+      pageSize: 10,
       pagenum: 1,
+      total: -1,
     };
   },
   mounted() {
@@ -92,9 +99,15 @@ export default {
       const res = await this.$http.get(
         `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pageSize}`
       );
-      console.log(res)
-      const { data, meta } = res;
-      this.tableData = data.users;
+      console.log(res);
+      const {
+        data: { users, total },
+        meta: { status, msg },
+      } = res;
+      if (status === 200) {
+        this.userlist = users;
+        this.$message.success(msg);
+      }
     },
   },
 };
