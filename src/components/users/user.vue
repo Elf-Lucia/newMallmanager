@@ -54,9 +54,10 @@
         </template>
       </el-table-column>
       <el-table-column prop="mg_state" label="用户状态">
-        <template slot-scope="userlist">
+        <template slot-scope="scope">
           <el-switch
-            v-model="userlist.row.mg_state"
+            v-model="scope.row.mg_state"
+            @change="editState(scope.row)"
             active-color="#13ce66"
             inactive-color="#ff4949"
           >
@@ -126,14 +127,12 @@
     <!-- 编辑用户对话框 -->
     <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
       <el-form :model="form">
-      
-        <el-form-item
-          label="用户名"
-          :label-width="formLabelWidth"
-         
-          required
-        >
-          <el-input v-model="form.username"  disabled autocomplete="off"></el-input>
+        <el-form-item label="用户名" :label-width="formLabelWidth" required>
+          <el-input
+            v-model="form.username"
+            disabled
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item label="邮箱" :label-width="formLabelWidth">
           <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -178,11 +177,27 @@ export default {
   },
   computed: {},
   methods: {
+    //修改用户状态
+    async editState(user) {
+      // console.log(uId, type);
+      const result = await this.$http.put(
+        `users/${user.id}/state/${user.mg_state}`
+      );
+      const {
+        data,
+        meta: { status, msg },
+      } = result;
+      if (status === 200) {
+        this.$message.success(msg);
+        this.getUserList();
+      } else {
+        this.$message.error(msg);
+      }
+    },
     //编辑用户
     async showEditDia(user) {
       this.dialogFormVisibleEdit = true;
       this.form = user;
-
     },
     //编辑用户点击提交确认按钮
     async EditUser(userId) {
