@@ -49,26 +49,31 @@
           type="primary"
           icon="el-icon-edit"
           size="small"
+          plain
           circle
         ></el-button>
         <el-button
           type="success"
           icon="el-icon-check"
           size="small"
+          plain
           circle
         ></el-button>
         <el-button
           type="danger"
           icon="el-icon-delete"
           size="small"
+          plain
           circle
         ></el-button>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
       :current-page="pagenum"
-      :page-sizes="[10, 20, 30, 50]"
+      :page-sizes="[5, 10, 15, 20]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
@@ -85,7 +90,7 @@ export default {
       //查询的数据
       query: "",
       // 分页相关的数据
-      pageSize: 10,
+      pageSize: 5,
       pagenum: 1,
       total: -1,
     };
@@ -94,6 +99,21 @@ export default {
     this.getUserList();
   },
   methods: {
+    //分页
+    handleSizeChange(val) {
+      //每页条数改变时会触发
+      this.pageSize = val;
+      this.pagenum = 1;
+      this.getUserList(); //重新获取数据
+      // console.log(`每页 ${val} 条`, this.pageSize);
+    },
+    handleCurrentChange(val) {
+      //当前页改变时发生变化
+      this.pagenum = val;
+      this.getUserList(); //重新获取数据
+      // console.log(`当前页: ${val}`, this.pagenum);
+    },
+    //获取用户列表数据
     async getUserList() {
       let AUTH_TOKEN = localStorage.getItem("token");
       this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
@@ -107,6 +127,7 @@ export default {
       } = res;
       if (status === 200) {
         this.userlist = users;
+        this.total = total;
         this.$message.success(msg);
       }
     },
