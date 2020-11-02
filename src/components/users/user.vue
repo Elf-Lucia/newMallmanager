@@ -34,13 +34,15 @@
           {{ userlist.row.create_time | frmdate }}
         </template>
       </el-table-column>
-      <el-table-column label="用户状态">
-        <el-switch
-          v-model="value"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-        >
-        </el-switch>
+      <el-table-column prop="mg_state" label="用户状态">
+        <template slot-scope="userlist">
+          <el-switch
+            v-model="userlist.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          >
+          </el-switch>
+        </template>
       </el-table-column>
       <el-table-column prop="address" label="操作">
         <el-button
@@ -82,7 +84,6 @@ export default {
       userlist: [],
       //查询的数据
       query: "",
-      value: true,
       // 分页相关的数据
       pageSize: 10,
       pagenum: 1,
