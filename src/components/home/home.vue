@@ -12,13 +12,13 @@
     <el-container>
       <el-aside class="aside">
         <!-- 侧边栏导航el-menu -->
-        <el-menu :unique-opened="false">
+        <el-menu :unique-opened="false" :router="true">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span slot="title">用户管理</span>
             </template>
-            <el-menu-item index="1-4">
+            <el-menu-item index="user">
               <i class="el-icon-location"></i>
               <span slot="title">用户列表</span>
             </el-menu-item>
@@ -77,7 +77,9 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -100,7 +102,7 @@ export default {
     handleExit() {
       if (confirm("您确认退出吗")) {
         localStorage.clear("token");
-        this.$message("退出成功")
+        this.$message("退出成功");
         this.$router.push({ name: "login" });
       }
     },
@@ -134,7 +136,11 @@ export default {
   width: 200px;
   background-color: #d3dce6;
 }
+.aside ul {
+  height: 100%;
+}
 .main {
   background-color: #e9eef3;
+  padding: 10px;
 }
 </style>
