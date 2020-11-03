@@ -47,13 +47,9 @@ export default {
       ulList: [],
     };
   },
-  beforeCreate() {
-    //在组件出现之前获取token，有就渲染组件
-    let token = localStorage.getItem("token");
-    if (!token) {
-      this.$router.push({ name: "login" });
-    }
-  },
+  // beforeCreate() {
+  
+  // },
   mounted() {
     this.getList();
   },
