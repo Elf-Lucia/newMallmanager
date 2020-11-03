@@ -69,7 +69,7 @@
             size="small"
             plain
             circle
-            @click="addRoleDia(scope.row)"
+            @click="showSetRightDia(scope.row)"
           ></el-button>
           <el-button
             type="danger"
@@ -77,12 +77,27 @@
             size="small"
             plain
             circle
-            @click="deleteUser(userlist.row.id)"
           ></el-button>
         </template>
       </el-table-column>
     </el-table>
-
+    <!-- 分配权限 -->
+    <el-dialog title="分配权限" :visible.sync="dialogTreeVisible">
+      <el-tree
+        ref="tree"
+        :data="treeRight"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        :default-checked-keys="arrChecked"
+        :props="defaultProps"
+      >
+      </el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogTreeVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addRights()">确 定</el-button>
+      </div>
+    </el-dialog>
     <!-- 添加角色Dia -->
     <el-dialog title="添加角色" :visible.sync="dialogFormVisibleRoleAdd">
       <el-form :model="form">
@@ -113,6 +128,16 @@ export default {
       formLabelWidth: "120px",
       dialogFormVisibleRoleAdd: false,
       form: {},
+      // 分配权限
+      dialogTreeVisible: false,
+      treeRight: [],
+      defaultProps: {
+        label: "authName",
+        children: "children",
+      },
+      // arrexpend: [],
+      arrChecked: [],
+      currentRoleId: -1,
     };
   },
   created() {
@@ -122,7 +147,59 @@ export default {
   methods: {
     showEditDia() {},
     addRoleDia() {},
-    deleteUser() {},
+    //添加角色权限
+    async addRights() {
+      this.dialogTreeVisible = false;
+      // 树形结构中全选的id  arr1  getCheckedKeys
+      let arr1 = this.$refs.tree.getCheckedKeys();
+      //树形结构中半选的id  arr2   getHalfCheckedKeys
+      let arr2 = this.$refs.tree.getHalfCheckedKeys();
+      //arr1+arr2
+      let arr = [...arr1, ...arr2];
+
+      const treeRight = await this.$http.post(
+        `roles/${this.currentRoleId}/rights`,
+        {
+          rids: arr.join(","), //树形结构中选中或半选的id
+        }
+      );
+      //更新视图
+      this.getData()
+    },
+    //显示设置权限对话框
+    async showSetRightDia(role) {
+      this.currentRoleId = role.id;
+      this.dialogTreeVisible = true;
+      const treeRight = await this.$http.get(`rights/tree`);
+      this.treeRight = treeRight.data;
+      //把所有的权限的id值放在一个数组里，达到全部展开的效果
+      // var arrtemp1 = [];
+      // this.treeRight.forEach((item1) => {
+      //   arrtemp1.push(item1.id);
+      //   item1.children.forEach((item2) => {
+      //     arrtemp1.push(item2.id);
+      //     item2.children.forEach((item3) => {
+      //       arrtemp1.push(item3.id);
+      //     });
+      //   });
+      // });
+      // this.arrexpend = arrtemp1;
+      //获取到当前角色有的权限，并且让其默认勾选
+      console.log(role);
+      var check = [];
+      role.children.forEach((item1) => {
+        // check.push(item1.id);
+        item1.children.forEach((item2) => {
+          // check.push(item2.id);
+          item2.children.forEach((item3) => {
+            check.push(item3.id);
+          });
+        });
+      });
+
+      // console.log(check);
+      this.arrChecked = check;
+    },
     //添加角色
     addRole() {
       this.dialogFormVisibleRoleAdd = true;
@@ -142,7 +219,7 @@ export default {
         this.$message.success(msg);
         //删除权限成功，只更新当前角色的剩余权限
         // this.getData(); 不需要更新整个表格
-        Role.children = data
+        Role.children = data;
       } else {
         this.$message.error(msg);
       }
