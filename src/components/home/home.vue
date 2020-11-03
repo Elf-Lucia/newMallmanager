@@ -141,7 +141,7 @@ export default {
   background-color: #d3dce6;
 }
 .aside ul {
-  height: calc(100vh - 150px);
+  height: 98%
 }
 .main {
   background-color: #e9eef3;

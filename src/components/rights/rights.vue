@@ -4,7 +4,9 @@
       <!-- 导航 -->
       <my-bread level1="权限管理" level2="权限列表"></my-bread>
     </div>
+
     <!-- 表格 -->
+    
     <el-table :data="tableData" border style="width: 100%" height="500px">
       <el-table-column prop="date" label="#" width="40" type="index">
       </el-table-column>
