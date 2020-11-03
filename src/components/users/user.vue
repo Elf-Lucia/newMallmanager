@@ -80,6 +80,7 @@
             size="small"
             plain
             circle
+            @click="addRoleDia(scope.row)"
           ></el-button>
           <el-button
             type="danger"
@@ -146,6 +147,31 @@
         <el-button type="primary" @click="EditUser(form.id)">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 分配角色 -->
+    <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRole">
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth" required>
+          {{ currentUserName }}
+        </el-form-item>
+        <el-form-item label="角色" :label-width="formLabelWidth">
+          {{ currentRoleId }}
+          <el-select v-model="currentRoleId">
+            <el-option label="请选择" value="-1"></el-option>
+
+            <el-option
+              :label="item.roleName"
+              v-for="(item, i) in roles"
+              :value="item.id"
+              :key="i"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
+        <el-button type="primary" @click="setRole()">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -163,6 +189,7 @@ export default {
       //添加用户对话框
       dialogFormVisibleAdd: false,
       dialogFormVisibleEdit: false,
+      dialogFormVisibleRole: false,
       form: {
         username: "",
         password: "",
@@ -170,6 +197,11 @@ export default {
         mobile: "",
       },
       formLabelWidth: "120px",
+      currentRoleId: -1,
+      currentUserName: "",
+      currentUserId:-1,
+      //保存所有的角色数据
+      roles: [],
     };
   },
   mounted() {
@@ -177,6 +209,47 @@ export default {
   },
   computed: {},
   methods: {
+    //分配角色的提交按钮
+    async setRole() {
+
+      this.dialogFormVisibleRole = false;
+      const resultSet = await this.$http.put(`users/${this.currentUserId}/role`, {
+        rid: this.currentRoleId,
+      });
+     const {
+        data: { rid },
+        meta: { status, msg },
+      } = resultSet;
+      if (status === 200) {
+        this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    //分配角色对话框
+    async addRoleDia(user) {
+      console.log(user, '')
+      this.dialogFormVisibleRole = true;
+      this.currentUserName = user.username;
+      //获取所有的角色roles
+      const resRole = await this.$http.get(`roles`);
+      this.roles = resRole.data;
+
+      //获取到当前用户的角色id->rid
+      const resultId = await this.$http.get(`users/${user.id}`);
+      //打开对话框给currentUserId赋值
+      this.currentUserId=user.id
+      const {
+        data: { rid },
+        meta: { status, msg },
+      } = resultId;
+      if (status === 200) {
+        this.currentRoleId = rid;
+      } else {
+        this.$message.error(msg);
+      }
+    },
+
     //修改用户状态
     async editState(user) {
       // console.log(uId, type);
