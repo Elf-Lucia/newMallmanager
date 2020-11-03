@@ -16,13 +16,20 @@
         <template slot-scope="scope">
           <el-row v-for="(item, i) in scope.row.children" :key="i" class="mt">
             <el-col :span="4">
-              <el-tag closable>{{ item.authName }}</el-tag>
+              <el-tag closable @close="deleteRight(scope.row, item.id)">{{
+                item.authName
+              }}</el-tag>
               <i class="el-icon-arrow-right"></i>
             </el-col>
             <el-col :span="20">
               <el-row v-for="(item2, i) in item.children" :key="i" class="mt">
                 <el-col :span="4">
-                  <el-tag closable type="success">{{ item2.authName }}</el-tag>
+                  <el-tag
+                    closable
+                    type="success"
+                    @close="deleteRight(scope.row, item2.id)"
+                    >{{ item2.authName }}</el-tag
+                  >
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <el-col :span="20">
@@ -31,12 +38,16 @@
                     :key="i"
                     closable
                     class="ml"
-                    type="danger">{{ item3.authName }}</el-tag
+                    type="danger"
+                    @close="deleteRight(scope.row, item3.id)"
+                    >{{ item3.authName }}</el-tag
                   >
                 </el-col>
               </el-row>
             </el-col>
           </el-row>
+          <!-- 无权限的提示 -->
+          <span v-if="scope.row.children.length === 0">未分配权限</span>
         </template>
       </el-table-column>
       <el-table-column label="#" type="index"> </el-table-column>
@@ -73,7 +84,7 @@
     </el-table>
 
     <!-- 添加角色Dia -->
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisibleRoleAdd">
+    <el-dialog title="添加角色" :visible.sync="dialogFormVisibleRoleAdd">
       <el-form :model="form">
         <el-form-item label="活动名称" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -116,11 +127,31 @@ export default {
     addRole() {
       this.dialogFormVisibleRoleAdd = true;
     },
+    // 点击tag删除权限
+    async deleteRight(Role, RightId) {
+      // console.log(RoleId,RightId);
+      const roleList = await this.$http.delete(
+        `roles/${Role.id}/rights/${RightId}`
+      );
+      const {
+        data,
+        meta: { status, msg },
+      } = roleList;
+      console.log(roleList);
+      if (status === 200) {
+        this.$message.success(msg);
+        //删除权限成功，只更新当前角色的剩余权限
+        // this.getData(); 不需要更新整个表格
+        Role.children = data
+      } else {
+        this.$message.error(msg);
+      }
+    },
     //获取角色列表
     async getData() {
       const roleList = await this.$http.get(`roles`);
-      console.log(roleList);
       this.roleList = roleList.data;
+      // console.log(this.roleList);
     },
   },
 };
@@ -146,6 +177,6 @@ export default {
   margin-bottom: 5px;
 }
 .ml {
-  margin:0 5px 5px;
+  margin: 0 5px 5px;
 }
 </style>
