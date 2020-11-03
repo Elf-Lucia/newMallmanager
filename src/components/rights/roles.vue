@@ -1,13 +1,9 @@
 <template>
   <el-card class="box-card bord">
-    <div slot="header" class="clearfix">
+     <div slot="header" class="clearfix">
       <!-- 导航 -->
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>权限管理</el-breadcrumb-item>
-        <el-breadcrumb-item>角色列表</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
+      <my-bread level1='权限管理' level2='角色列表'></my-bread>
+     </div>
     <!-- 表格 -->
     <el-table :data="tableData" style="width: 100%">
       <el-table-column type="expand">
@@ -82,6 +78,7 @@ export default {
       }
     
   },
+ 
 };
 </script>
 
