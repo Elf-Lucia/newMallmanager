@@ -3,12 +3,16 @@ import axios from 'axios'
 const MyHttpServer = {}
 MyHttpServer.install = (Vue) => {
     axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
-    let AUTH_TOKEN = localStorage.getItem("token");
-    axios.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+
     // 添加请求拦截器
     axios.interceptors.request.use(function (config) {
         // 在发送请求之前做些什么
-
+    
+        // 如果不是登录请求，再加token
+        if (!/login/.test(config.url)) {
+            let AUTH_TOKEN = localStorage.getItem("token");
+            config.headers["Authorization"] = AUTH_TOKEN;
+        }
 
         return config;
     }, function (error) {
