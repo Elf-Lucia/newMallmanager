@@ -245,7 +245,7 @@ export default {
       //必须选择三级分类，点击第二个tab才会获取数据
       //选择第二个tab时获取参数
     },
-    //获取用户列表数据
+    //获取三级分类数据
     async getCatoriesList() {
       // let AUTH_TOKEN = localStorage.getItem("token");
       // this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;

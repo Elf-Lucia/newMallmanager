@@ -327,7 +327,7 @@ export default {
         this.$message.error(msg);
       }
       // 清空文本框
-      // this.form = {};
+      this.form = {};
       for (const key in this.form) {
         if (this.form.hasOwnProperty(key)) {
           this.form[key] = "";
