@@ -47,9 +47,9 @@ export default {
       ulList: [],
     };
   },
-  // beforeCreate() {
+  beforeCreate() {
   
-  // },
+  },
   mounted() {
     this.getList();
   },
@@ -66,7 +66,7 @@ export default {
     async getList() {
       const res = await this.$http.get(`menus`);
       this.ulList = res.data;
-      console.log(res);
+      // console.log(res);
     },
   },
 };
