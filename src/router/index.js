@@ -9,6 +9,8 @@ import Goods from '@/components/shops/goodslist.vue'
 import GoodsAdd from '@/components/shops/goodsadd.vue'
 import Params from '@/components/shops/params.vue'
 import Goodscate from '@/components/shops/goodscate.vue'
+import Orders from '@/components/list/orderList.vue'
+import Reports from '@/components/report/reports.vue'
 
 Vue.use(VueRouter)
 
@@ -59,6 +61,16 @@ const routes = [
         name: 'categories',
         component: Goodscate,
       },
+      {
+        path: '/orders',
+        name: 'orders',
+        component: Orders,
+      },
+      {
+        path: '/reports',
+        name: 'reports',
+        component: Reports,
+      }
     ]
   },
   { path: '*', redirect: '/users' }
