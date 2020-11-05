@@ -88,7 +88,33 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="静态参数" name="second">静态参数</el-tab-pane>
+      <el-tab-pane label="静态参数" name="second">
+        <el-button type="primary">设置静态参数</el-button>
+        <el-table :data="staticParams" style="width: 100%">
+          <el-table-column label="#" type="index"> </el-table-column>
+          <el-table-column label="属性名称" prop="attr_name"> </el-table-column>
+          <el-table-column label="属性值" prop="attr_vals"> </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                size="small"
+                plain
+                circle
+              ></el-button>
+
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="small"
+                plain
+                circle
+              ></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
     </el-tabs>
   </el-card>
 </template>
@@ -154,9 +180,7 @@ export default {
         attr_vals: attrVals.attr_vals.join(","),
       };
       const res = await this.$http.put(
-        `categories/${this.selectdOptions[2]}/attributes/${
-          attrVals.attr_id
-        }`,
+        `categories/${this.selectdOptions[2]}/attributes/${attrVals.attr_id}`,
         putData
       );
       console.log(res);
@@ -172,7 +196,7 @@ export default {
     async handleInputConfirm(attrVals) {
       let inputValue = this.inputValue;
       if (inputValue) {
-         attrVals.attr_vals.push(inputValue);
+        attrVals.attr_vals.push(inputValue);
         //发送请求添加参数
         let putData = {
           attr_name: attrVals.attr_name,
@@ -180,9 +204,7 @@ export default {
           attr_vals: attrVals.attr_vals.join(","),
         };
         const res = await this.$http.put(
-          `categories/${this.selectdOptions[2]}/attributes/${
-            attrVals.attr_id
-          }`,
+          `categories/${this.selectdOptions[2]}/attributes/${attrVals.attr_id}`,
           putData
         );
         console.log("cat", res);
